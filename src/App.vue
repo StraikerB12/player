@@ -1,6 +1,8 @@
 <template>
   <div>
 
+    <!-- new commit -->
+
     <div class="panel" ref="panel">
       <video
         class="video-payer" 
