@@ -6,7 +6,7 @@ import ElementUI from 'element-ui';
 import DynamicStyle from 'vue-dynamic-style';
 
 Vue.use(ElementUI);
-Vue.use(DynamicStyle, { prefix: '', scoped: false});
+Vue.use(DynamicStyle, { prefix: 'app-player-'});
 
 (async () => {
 
