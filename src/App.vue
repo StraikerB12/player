@@ -274,7 +274,9 @@
       showAds: false,
       adsComponent: null,
       dataAds: null,
-      adNum: 0
+      adNum: 0,
+
+      timeControl: 0
     }),
 
     computed: {
@@ -432,32 +434,37 @@
       timeAds(){
 
         let currentTime = Math.floor(this.player.currentTime);
-        console.log('time', currentTime);
+        
+        if(this.timeControl != currentTime){
 
-        // Позиция старта
-        if(this.adsList.start != null && currentTime == 0) {
-          console.log('start ads');
-          this.startAd(this.adsList.start);
-        }
+          // Позиция старта
+          if(this.adsList.start != null && currentTime == 0) {
+            console.log('start ads');
+            this.startAd(this.adsList.start);
+          }
 
-        // Позиция конца
-        if(this.adsList.end != null && currentTime == Math.floor(this.player.duration * 0.7) ){
-          console.log('end ads');
-          this.startAd(this.adsList.end);
-        }
+          // Позиция конца
+          if(this.adsList.end != null && currentTime == Math.floor(this.player.duration * 0.7) ){
+            console.log('end ads');
+            this.startAd(this.adsList.end);
+          }
 
 
-        if(this.adsList.center[this.adNum] < currentTime){
-          this.adNum = this.adNum + 1;
-        }
+          if(this.adsList.center[this.adNum] < currentTime){
+            this.adNum = this.adNum + 1;
+          }
 
-        // Показ по установленому времени
-        if(this.adsList.center[this.adNum] != null && this.adsList.center[this.adNum].time == currentTime){
+          // Показ по установленому времени
+          if(this.adsList.center[this.adNum] != null && this.adsList.center[this.adNum].time == currentTime){
 
-          console.log('center ads', this.adsList.center[this.adNum], this.adsList.center, this.adNum);
+            console.log('center ads', this.adsList.center[this.adNum], this.adsList.center, this.adNum);
 
-          this.startAd(this.adsList.center[this.adNum]); 
-          this.adNum = this.adNum + 1;
+            this.startAd(this.adsList.center[this.adNum]); 
+            this.adNum = this.adNum + 1;
+          }
+
+          console.log('time', currentTime);
+          this.timeControl = currentTime;
         }
 
       },
