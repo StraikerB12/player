@@ -4,7 +4,7 @@ const publicPath = '/kholobok-biz/';
 
 module.exports = () => ({
   devServer: {
-    host: '0.0.0.0',
+    host: 'localhost',
     disableHostCheck: true,
     port: 8030,
     open: true,
