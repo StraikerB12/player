@@ -122,7 +122,7 @@
 <script>
 
   let playList = null;
-  let domain = null;
+  let domain = 'kholobok.biz';
   let dataStylePlayer = null;
 
   if(typeof systemInfo != 'undefined'){
@@ -136,6 +136,8 @@
     dataStylePlayer = dataPlayer;
   }
 
+  // console.log('data load');
+
 
 
   import moment from 'moment';
@@ -147,25 +149,29 @@
   import link from 'components/Link';
   import baner from 'components/Baner';
   import code from 'components/Code';
-
+  import vast from 'components/vast';
   
 
-
+  // console.log('vue start');
 
   export default {
     name: 'App',
     components: {
       adsLink: link,
       adsBaner: baner,
-      adsCode: code
+      adsCode: code,
+      adsVast: vast
     },
     props: ['stylePanel', 'styles', 'video', 'playList'],
 
     styles() {
 
+      
+
       let player = {width: '100vw', height: '100vh'};
       if(this.styles != null) player = this.styles;
-      
+
+      // console.log('styles start', this.dataStyle);
 
       return {
         scoped: true,
@@ -305,11 +311,13 @@
 
     async created() {
 
+      console.log('created modul');
+
       if(this.stylePanel != null) this.dataStyle = this.stylePanel;
       if(dataStylePlayer != null) this.dataStyle = dataStylePlayer;
 
 
-      eval('console.log("moev");var moevideoQueue = moevideoQueue || [];moevideoQueue.push(function () {moevideo.ContentRoll({"mode": "manual","insertAfter": "#adv","width": "auto","ignorePlayers": true});});');
+      // eval('console.log("moev");var moevideoQueue = moevideoQueue || [];moevideoQueue.push(function () {moevideo.ContentRoll({"mode": "manual","insertAfter": "#adv","width": "auto","ignorePlayers": true});});');
 
 
       // let time = moment({hour: 0, minute: 0, seconds: 0}).format('H:m:s');
@@ -338,7 +346,7 @@
 
 
       await this.initHls();
-      console.log(this.seria);
+      console.log('seria', this.seria);
     },
 
     async updated() {},
@@ -357,6 +365,8 @@
 
         await this.$nextTick(function () {
 
+          console.log('model load');
+
           this.fullScreen = fullScreen(this.$refs.panel);
           this.fullScreen.on('attain',() => { this.fullScreenActive = true; });
           this.fullScreen.on('release',() => { this.fullScreenActive = false; });
@@ -367,6 +377,7 @@
           this.Hls.attachMedia(this.player);
 
           this.Hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            console.log('player load');
             this.player.addEventListener('loadedmetadata', () => { this.loadedMetaData(); });
             this.player.addEventListener('progress', () => { this.progressD(); });
             this.player.addEventListener('timeupdate', () => { this.timeUpdate(); }, false);
@@ -417,14 +428,16 @@
         this.dataAds = obj;
         this.adsComponent = this.dataAds.type;
 
-        axios.get('https://api.kholobok.biz/apishow/shows.showsAd', {
-          params: {
-            domain,
-            id: obj.id
-          }
-        }).then(({data}) => {
-          console.log(data);
-        });
+        if(obj.type != 'vast'){
+          axios.get('https://api.kholobok.biz/apishow/shows.showsAd', {
+            params: {
+              domain,
+              id: obj.id
+            }
+          }).then(({data}) => {
+            console.log(data);
+          });
+        }
       },
 
       endAds(){
@@ -593,9 +606,10 @@
   body{
     margin: 0;
     padding: 0;
+    font-family: sans-serif;
   }
   body *{
-    
+    font-family: sans-serif;
     box-sizing: border-box;
   }
 

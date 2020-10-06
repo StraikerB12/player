@@ -1,0 +1,105 @@
+{
+  "_from": "vast-player",
+  "_id": "vast-player@0.2.10",
+  "_inBundle": false,
+  "_integrity": "sha1-54Ses6wUpAoVqLH+Mnt6nBf3nh4=",
+  "_location": "/vast-player",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "vast-player",
+    "name": "vast-player",
+    "escapedName": "vast-player",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/vast-player/-/vast-player-0.2.10.tgz",
+  "_shasum": "e7849eb3ac14a40a15a8b1fe327b7a9c17f79e1e",
+  "_spec": "vast-player",
+  "_where": "C:\\Users\\Professional\\gits\\kholobok",
+  "author": {
+    "name": "Reelcontent, Inc."
+  },
+  "browserify": {
+    "transform": [
+      "browserify-versionify"
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/cinema6/vast-player/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "browserify-versionify": "^1.0.6",
+    "lie": "^3.0.2",
+    "sort-by": "^1.1.1",
+    "vastacular": "^0.2.0"
+  },
+  "deprecated": false,
+  "description": "Playback VAST creatives in a web browser.",
+  "devDependencies": {
+    "brfs": "^1.4.3",
+    "browserify": "^13.0.0",
+    "flex-sdk": "^4.0.0-0",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^4.0.1",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-clean": "^0.7.0",
+    "grunt-contrib-connect": "^0.11.2",
+    "grunt-contrib-jshint": "^0.12.0",
+    "grunt-contrib-uglify": "^0.11.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-karma": "^0.12.1",
+    "grunt-mxmlc": "^0.5.3",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.19",
+    "karma-browserify": "^5.0.1",
+    "karma-jasmine": "^0.3.7",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "phantomjs-prebuilt": "^2.1.4",
+    "proxyquire": "^1.7.4",
+    "proxyquire-universal": "^1.0.8",
+    "proxyquireify": "^3.1.1",
+    "watchify": "^3.7.0"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "index.js"
+  ],
+  "homepage": "https://github.com/cinema6/vast-player#readme",
+  "keywords": [
+    "vast",
+    "vpaid",
+    "iab",
+    "video",
+    "ads",
+    "ads",
+    "advertising",
+    "video",
+    "player",
+    "video",
+    "player"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "vast-player",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cinema6/vast-player.git"
+  },
+  "scripts": {
+    "build": "grunt build",
+    "examples": "grunt server",
+    "prepublish": "npm test && npm run build",
+    "tdd": "grunt tdd",
+    "test": "grunt test"
+  },
+  "version": "0.2.10"
+}
