@@ -243,7 +243,7 @@
 
       dataStyle: null,
 
-
+      domain: domain,
 
       event: 'playPlayer',
 
@@ -426,6 +426,7 @@
         this.showAds = true;
 
         this.dataAds = obj;
+        this.dataAds.domain = this.domain;
         this.adsComponent = this.dataAds.type;
 
         if(obj.type != 'vast'){
@@ -463,8 +464,9 @@
           }
 
 
-          if(this.adsList.center[this.adNum] < currentTime){
+          if(this.adsList.center[this.adNum].time < currentTime){
             this.adNum = this.adNum + 1;
+            console.log('chek next');
           }
 
           // Показ по установленому времени
@@ -476,7 +478,7 @@
             this.adNum = this.adNum + 1;
           }
 
-          console.log('time', currentTime);
+          console.log('time', currentTime , ' | edNum '+this.adNum);
           this.timeControl = currentTime;
         }
 

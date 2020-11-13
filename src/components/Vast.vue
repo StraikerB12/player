@@ -34,12 +34,12 @@
         });
         
 
-        player.once('AdVideoStart', function() {
-          console.log('AdVideoStart');
+        player.once('AdVideoStart', () => {
+          console.log('AdVideoStart', this.data);
 
           axios.get('https://api.kholobok.biz/apishow/shows.showsAd', {
             params: {
-              domain,
+              domain: this.data.domain,
               id: this.data.id
             }
           }).then(({data}) => {
