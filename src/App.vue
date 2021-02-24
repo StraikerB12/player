@@ -1,7 +1,24 @@
 <template>
-  <div>
+  <div style="position:relative;">
 
     <!-- new commit -->
+    <div class="info__fon" v-show="infoVisible">
+      <div class="info__form">
+        <div class="info__close">
+          <span>Информация</span><i class="el-icon-close" v-on:click="infoVisible = false"></i>
+        </div>
+        <div class="info__content">
+          <!-- По вопросам размещения плеера и рекламы<br>обращаться по почте Johnlegon@yandex.ru -->
+
+          По вопросам размещения плеера и рекламы<br>обращаться: support@kholobok.biz<br>или Телеграм @kholobok
+        </div>
+      </div>
+    </div>
+
+    <div class="save__form" v-show="saveTimeVisible">
+      <div class="save__text">Вы остановились на {{formatTime(saveTime)}}</div>
+      <div class="save__button" @click="setSaveTime">Продолжить просмотр</div>
+    </div>
 
     <div class="panel" ref="panel">
       <video
@@ -25,7 +42,7 @@
         v-on:mousemove="hovPlay()"
         ref="contener">
 
-        
+        <div class="panel__info" v-on:click="infoVisible = true"><i class="el-icon-info"></i></div>
 
         <div class="panel__play-list">
 
@@ -102,33 +119,32 @@
     
     <div id="adv"></div>
     
-
-    <!-- <p v-on:click="getLevels">Levels</p>
-    <div v-for="(item, index) of levelsHls" :key="index" v-on:click="newLevels(index)">
-      {{ item.height }}
-    </div>
-    <div v-on:click="newLevels(-1)">
-      auto
-    </div> -->
-
-    <!-- <el-slider :style="dataStyle.linePanel.stylePlay" v-model="progress" :show-tooltip="false"></el-slider> -->
-  
-    <!-- https://round.kholobok.biz/movies/3eb65218f284f347209d4c4c1637d7dd9a93d90b/fc1f7b55484beabddcef8ed9c67732ae:2021062013/720.mp4 -->
-    <!-- https://round.kholobok.biz/movies/3eb65218f284f347209d4c4c1637d7dd9a93d90b/fc1f7b55484beabddcef8ed9c67732ae:2021062013/hls.m3u8 -->
-
   </div>
 </template>
 
 <script>
 
+  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; 
+  m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) 
+  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym"); 
+  
+  ym(70538995, "init", { 
+    clickmap:true, 
+    trackLinks:true, 
+    accurateTrackBounce:true, 
+    webvisor:true 
+  }); 
+
   let playList = null;
   let domain = 'kholobok.biz';
   let dataStylePlayer = null;
+  let id = null;
 
   if(typeof systemInfo != 'undefined'){
     console.log(systemInfo);
     playList = systemInfo.playList;
     domain = systemInfo.domain;
+    id = systemInfo.id;
   }
 
   if(typeof dataPlayer != 'undefined'){
@@ -162,27 +178,21 @@
       adsCode: code,
       adsVast: vast
     },
-    props: ['stylePanel', 'styles', 'video', 'playList'],
+    props: ['stylePanel', 'styles', 'video', 'playList', 'filmId'],
 
     styles() {
-
-      
 
       let player = {width: '100vw', height: '100vh'};
       if(this.styles != null) player = this.styles;
 
-      // console.log('styles start', this.dataStyle);
+      document.body.className = this.$styles.className;
+      // console.log(this.$styles.className);
 
       return {
         scoped: true,
-
-
         '.panel': { ...player},
-
         '.panel__play-list': {
-
           ...this.dataStyle.playList.style,
-
           '.el-select': { ...this.dataStyle.playList.styleSelect },
           '.el-input__inner':{ ...this.dataStyle.playList.styleInput },
           '.el-select:hover .el-input__inner': { ...this.dataStyle.playList.styleInputHover },
@@ -193,6 +203,7 @@
         '.el-select-dropdown__item': { ...this.dataStyle.playList.styleItem },
         '.el-select-dropdown__item.selected': { ...this.dataStyle.playList.styleItemSelect },
         '.el-select-dropdown__item.hover': { ...this.dataStyle.playList.styleItemHover },
+        '.el-select .el-input.is-focus .el-input__inner': { ...this.dataStyle.playList.styleInput },
 
         '.panel__play': { ...this.dataStyle.play.style },
         '.panel__play:hover': { ...this.dataStyle.play.styleHover },
@@ -242,8 +253,13 @@
     data: () => ({
 
       dataStyle: null,
+      infoVisible: false,
 
       domain: domain,
+      id: id,
+
+      saveTimeVisible: false,
+      saveTime: 0,
 
       event: 'playPlayer',
 
@@ -268,7 +284,6 @@
       volum: 1,
 
 
-
       listen: null,
       listenIndex: 0,
       sezon: null,
@@ -288,9 +303,11 @@
     computed: {
       progress: {
         get: function(){
+          console.log('progress get', parseFloat(( (this.reverFormatTime(this.currentTime) / this.reverFormatTime(this.durationTime)) * 100 ).toFixed(3)));
           return parseFloat(( (this.reverFormatTime(this.currentTime) / this.reverFormatTime(this.durationTime)) * 100 ).toFixed(3));
         },
         set: function(value){
+          console.log('progress set', value);
           let time = Math.round( (parseFloat(value).toFixed(3) / 100) * this.reverFormatTime(this.durationTime) );
           if(this.formatTime(time) != this.currentTime){
             
@@ -307,46 +324,29 @@
       },
     },
 
-
-
     async created() {
-
-      console.log('created modul');
 
       if(this.stylePanel != null) this.dataStyle = this.stylePanel;
       if(dataStylePlayer != null) this.dataStyle = dataStylePlayer;
 
-
-      // eval('console.log("moev");var moevideoQueue = moevideoQueue || [];moevideoQueue.push(function () {moevideo.ContentRoll({"mode": "manual","insertAfter": "#adv","width": "auto","ignorePlayers": true});});');
-
-
-      // let time = moment({hour: 0, minute: 0, seconds: 0}).format('H:m:s');
-      // console.log( new Date(time) );
-      // console.log( moment( new Date(time) ).format('H:m:s') );
-
+      if(this.filmId != null) this.id = this.filmId;
+      if(id != null) this.id = id;
+      
       if(playList != null){
         this.listen = playList;
-        console.log(this.listen);
         this.sezon = this.listen[this.listenIndex].folder;
-        console.log(this.sezon);
         this.serias = this.sezon[this.sezonIndex].folder;
-        console.log(this.serias);
         this.seria = this.serias[0].file;
-        console.log(this.seria);
       }else if(this.playList != null){
-
         this.listen = this.playList;
         this.sezon = this.listen[this.listenIndex].folder;
         this.serias = this.sezon[this.sezonIndex].folder;
         this.seria = this.serias[0].file;
-        
       }else{
         this.seria = 'https://round.kholobok.biz/movies/3eb65218f284f347209d4c4c1637d7dd9a93d90b/9283ef822660937c4c1d5fbc698c6d85:2020091819/hls.m3u8';
       }
 
-
       await this.initHls();
-      console.log('seria', this.seria);
     },
 
     async updated() {},
@@ -365,8 +365,6 @@
 
         await this.$nextTick(function () {
 
-          console.log('model load');
-
           this.fullScreen = fullScreen(this.$refs.panel);
           this.fullScreen.on('attain',() => { this.fullScreenActive = true; });
           this.fullScreen.on('release',() => { this.fullScreenActive = false; });
@@ -377,11 +375,9 @@
           this.Hls.attachMedia(this.player);
 
           this.Hls.on(Hls.Events.MANIFEST_PARSED, () => {
-            console.log('player load');
             this.player.addEventListener('loadedmetadata', () => { this.loadedMetaData(); });
             this.player.addEventListener('progress', () => { this.progressD(); });
             this.player.addEventListener('timeupdate', () => { this.timeUpdate(); }, false);
-
             this.player.addEventListener('waiting', () => { this.loaded = true; }); // Событие загрузки
             this.player.addEventListener('playing', () => { this.loaded = false; }); // Событие окончания загрузки
           });
@@ -403,23 +399,7 @@
           console.log(data.data);
           this.adsList = data.data;
         });
-
-        // countAds: 1
-        // duration: 426
-        // fullTime: "634" 444
-
-        // center: Array(3)
-        // countAds: 4
-        // duration: 426
-        // fullTime: "1800"
-
-        // center: Array(3)
-        // countAds: 3
-        // duration: 600
-        // fullTime: "1800"
       },
-
-
 
       startAd(obj){
         console.log('start ad', obj);
@@ -448,6 +428,7 @@
       timeAds(){
 
         let currentTime = Math.floor(this.player.currentTime);
+        localStorage.setItem('film'+ this.id, currentTime);
         
         if(this.timeControl != currentTime){
 
@@ -463,8 +444,7 @@
             this.startAd(this.adsList.end);
           }
 
-
-          if(this.adsList.center[this.adNum].time < currentTime){
+          if(this.adsList.center[this.adNum] && this.adsList.center[this.adNum].time < currentTime){
             this.adNum = this.adNum + 1;
             console.log('chek next');
           }
@@ -484,13 +464,25 @@
 
       },
 
-
+      setSaveTime(){
+        this.player.currentTime = this.saveTime;
+        this.playPlayer();
+      },
 
 
       // // События плеера
 
       // Событие загрузки плеера
       loadedMetaData(){
+        // console.log('loadedMetaData', this.id);
+
+        let saveTime = localStorage.getItem('film'+ this.id);
+        if(saveTime > 0){
+          // this.player.currentTime = saveTime;
+          this.saveTime = saveTime;
+          this.saveTimeVisible = true;
+        }
+
         this.levelsHls = this.Hls.levels;
         this.durationTime = this.formatTime( Math.floor(this.player.duration) );
         this.getAdsList();
@@ -520,6 +512,7 @@
 
       // Включить и остановить проигрывание
       playPlayer(){
+        this.saveTimeVisible = false;
         this.paused = false;
         this.player.play(); 
       },
@@ -566,8 +559,6 @@
         // this.pausedPlayer();
       },
 
-
-      
       
       // Секунды в формат
       formatTime(time){
@@ -615,7 +606,74 @@
     box-sizing: border-box;
   }
 
-  
+  .panel__info{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .info{
+    &__fon{
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: center;
+      z-index: 99999999999999999;
+    }
+    &__form{
+      width: 60%;
+      padding: 20px 25px;
+      position: relative;
+      top:-40px;
+      background: rgb(0, 0, 0);
+      box-sizing: border-box;
+      align-self: center;
+      color: #fff;
+      border: 1px solid #818181;
+    }
+    &__close{
+      & span{
+
+      }
+      & i{
+        float: right;
+        font-size: 18px;
+        cursor: pointer;
+      }
+    }
+    &__content{
+      text-align: center;
+      padding: 15px 0;
+    }
+  }
+
+  .save__{
+    &form{
+      width: 220px;
+      position: absolute;
+      margin-left: 50%;
+      left: -110px;
+      top: 61%;
+      z-index: 99999999999999999;
+    }
+    &text{
+      text-align: center;
+      padding: 5px 10px;
+      color: #7c7c7c;
+      font-size: 14px;
+    }
+    &button{
+      background: #2d90b8;
+      color: #fff;
+      padding: 5px 10px;
+      text-align: center;
+      cursor: pointer;
+    }
+  }
 
   .panel{
     
@@ -660,9 +718,6 @@
     transform: translateY(-50%);
     width: 100%;
   }
-
-
-
 
 
   .panel__play{
@@ -730,8 +785,6 @@
     top: -10px;
     position: relative;
   }
-
-
 
 
   .panel__control-line{
