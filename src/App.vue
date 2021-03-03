@@ -8,8 +8,6 @@
           <span>Информация</span><i class="el-icon-close" v-on:click="infoVisible = false"></i>
         </div>
         <div class="info__content">
-          <!-- По вопросам размещения плеера и рекламы<br>обращаться по почте Johnlegon@yandex.ru -->
-
           По вопросам размещения плеера и рекламы<br>обращаться: support@kholobok.biz<br>или Телеграм @kholobok
         </div>
       </div>
