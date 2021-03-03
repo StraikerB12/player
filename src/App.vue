@@ -149,7 +149,7 @@
   import link from 'components/Link';
   import baner from 'components/Baner';
   import code from 'components/Code';
-  import vast from 'components/vast';
+  import vast from 'components/Vast';
   
 
   // console.log('vue start');
