@@ -12,6 +12,7 @@
         </div>
       </div>
     </div>
+    
 
     <div class="save__form" v-show="saveTimeVisible">
       <div class="save__text">Вы остановились на {{formatTime(saveTime)}}</div>
