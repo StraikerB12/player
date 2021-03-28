@@ -140,14 +140,14 @@
   let id = null;
 
   if(typeof systemInfo != 'undefined'){
-    console.log(systemInfo);
+    // console.log(systemInfo);
     playList = systemInfo.playList;
     domain = systemInfo.domain;
     id = systemInfo.id;
   }
 
   if(typeof dataPlayer != 'undefined'){
-    console.log(dataPlayer);
+    // console.log(dataPlayer);
     dataStylePlayer = dataPlayer;
   }
 
@@ -302,11 +302,11 @@
     computed: {
       progress: {
         get: function(){
-          console.log('progress get', parseFloat(( (this.reverFormatTime(this.currentTime) / this.reverFormatTime(this.durationTime)) * 100 ).toFixed(3)));
+          // console.log('progress get', parseFloat(( (this.reverFormatTime(this.currentTime) / this.reverFormatTime(this.durationTime)) * 100 ).toFixed(3)));
           return parseFloat(( (this.reverFormatTime(this.currentTime) / this.reverFormatTime(this.durationTime)) * 100 ).toFixed(3));
         },
         set: function(value){
-          console.log('progress set', value);
+          // console.log('progress set', value);
           let time = Math.round( (parseFloat(value).toFixed(3) / 100) * this.reverFormatTime(this.durationTime) );
           if(this.formatTime(time) != this.currentTime){
             
@@ -346,6 +346,7 @@
       }
 
       await this.initHls();
+      this.showVideo();
     },
 
     async updated() {},
@@ -382,7 +383,7 @@
           });
 
           this.Hls.on(Hls.Events.ERROR, function (event, data) {
-            console.log(event, data);
+            console.error(event, data);
           });
 
         });
@@ -395,13 +396,13 @@
             fullTime: Math.floor(this.player.duration * 0.7)
           }
         }).then(({data}) => {
-          console.log(data.data);
+          // console.log(data.data);
           this.adsList = data.data;
         });
       },
 
       startAd(obj){
-        console.log('start ad', obj);
+        // console.log('start ad', obj);
         this.showAds = true;
 
         this.dataAds = obj;
@@ -415,7 +416,7 @@
               id: obj.id
             }
           }).then(({data}) => {
-            console.log(data);
+            // console.log(data);
           });
         }
       },
@@ -431,33 +432,33 @@
         
         if(this.timeControl != currentTime){
 
+          this.showFullVideo();
+
           // Позиция старта
           if(this.adsList.start != null && currentTime == 0) {
-            console.log('start ads');
+            // console.log('start ads');
             this.startAd(this.adsList.start);
           }
 
           // Позиция конца
           if(this.adsList.end != null && currentTime == Math.floor(this.player.duration * 0.7) ){
-            console.log('end ads');
+            // console.log('end ads');
             this.startAd(this.adsList.end);
           }
 
           if(this.adsList.center[this.adNum] && this.adsList.center[this.adNum].time < currentTime){
             this.adNum = this.adNum + 1;
-            console.log('chek next');
+            // console.log('chek next');
           }
 
           // Показ по установленому времени
           if(this.adsList.center[this.adNum] != null && this.adsList.center[this.adNum].time == currentTime){
-
-            console.log('center ads', this.adsList.center[this.adNum], this.adsList.center, this.adNum);
-
+            // console.log('center ads', this.adsList.center[this.adNum], this.adsList.center, this.adNum);
             this.startAd(this.adsList.center[this.adNum]); 
             this.adNum = this.adNum + 1;
           }
 
-          console.log('time', currentTime , ' | edNum '+this.adNum);
+          // console.log('time', currentTime , ' | edNum '+this.adNum);
           this.timeControl = currentTime;
         }
 
@@ -543,7 +544,6 @@
       changeListen(){
         this.pausedPlayer();
         this.sezon = this.listen[this.listenIndex].folder;
-        // this.sezonIndex = 0;
         this.serias = this.sezon[0].folder;
         this.seria = this.serias[0].file;
         this.initHls();
@@ -551,11 +551,27 @@
 
 
       // Выбрать / задать качество видео
-      getLevels(){ console.log(this.Hls.currentLevel); },
       newLevels(index){
-        // this.playPlayer();
         this.Hls.currentLevel = index;
-        // this.pausedPlayer();
+      },
+
+
+      showVideo(){
+        console.log('showVideo');
+        axios.get('https://api.kholobok.biz/apishow/shows.show', {
+          params: { domain: this.domain }
+        }).then(({data}) => {});
+      },
+
+      showFullVideo(){
+        let durationTime = this.reverFormatTime(this.durationTime) - (this.reverFormatTime(this.durationTime) * 0.3);
+        let currentTime = this.reverFormatTime(this.currentTime);
+        console.log('timeUpdate', currentTime, '>=', durationTime, currentTime >= durationTime, ' | durationTime',this.durationTime);
+        if(currentTime >= durationTime && currentTime < durationTime + 1){
+          axios.get('https://api.kholobok.biz/apishow/shows.fullshow', {
+            params: { domain: this.domain }
+          }).then(({data}) => {});
+        }
       },
 
       
